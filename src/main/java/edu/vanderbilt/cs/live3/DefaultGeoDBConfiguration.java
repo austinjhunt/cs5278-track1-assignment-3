@@ -10,7 +10,8 @@ public class DefaultGeoDBConfiguration {
      * @return
      */
     public GeoDBFactory getDBFactory(){
-        return null;
+    	return new GeoDBFactory();
+        // return null;
     }
 
     /**
@@ -21,7 +22,9 @@ public class DefaultGeoDBConfiguration {
      * @return
      */
     public GeoHashFactory getHashFactory(){
-        return null;
+        return new GeoHashFactoryImpl();
+    	// return null;
+        
     }
 
 }

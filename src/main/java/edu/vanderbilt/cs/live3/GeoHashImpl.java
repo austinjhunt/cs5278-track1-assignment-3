@@ -1,6 +1,9 @@
 package edu.vanderbilt.cs.live3;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * The original version of GeoHash failed to properly encapsulate the representation
@@ -21,18 +24,39 @@ import java.util.Iterator;
  * else.
  *
  */
-public class GeoHashImpl implements GeoHash {
-
-
-        public GeoHashImpl() {
+public class GeoHashImpl extends GeoHashOriginal implements GeoHash {
+	 
+		private String geohashString;
+		private boolean[] geohashArray; 
+		private int bitsOfPrecision;
+		
+		public GeoHashImpl(String geohash) {
+			this.geohashString = geohash;
+			this.geohashArray = this.bitStringToBoolArray(geohash);
+			this.bitsOfPrecision = geohash.length();
+		}
+		public GeoHashImpl(boolean[] geohash) {
+			this.geohashArray = geohash;
+			this.geohashString  = this.boolArrayToString(geohash);
+			this.bitsOfPrecision = geohash.length;
+		}
+		
+        public GeoHashImpl(double lat, double lon, int bitsOfPrecision) {
             // @ToDo, fill this in
-            // You are free to change the constructor parameters.
+            // You are free to change the constructor parameters. 
+        	this.bitsOfPrecision = bitsOfPrecision;
+        	this.geohashArray = this.geohash(lat, lon, bitsOfPrecision);
+        	this.geohashString = this.toHashString(this.geohashArray); 
         }
 
         public int bitsOfPrecision() {
-            return -1;
+        	return this.bitsOfPrecision;
+            // return -1;
         }
-
+        
+        public String getGeoHashString() {
+        	return this.geohashString;
+        }
         /**
          * Similar to "substring" on Strings. This method should
          * return the first n bits of the GeoHash as a new
@@ -42,7 +66,9 @@ public class GeoHashImpl implements GeoHash {
          * @return
          */
         public GeoHashImpl prefix(int n){
-            return null;
+        	return new GeoHashImpl(
+        			this.geohashString.substring(0, n));
+            // return null;
         }
 
         public GeoHashImpl northNeighbor() {
@@ -72,30 +98,51 @@ public class GeoHashImpl implements GeoHash {
         @Override
         public Iterator<Boolean> iterator() {
            // @ToDo, create an iterator for the bits in the GeoHash
-            return null;
+        	// convert geohash array to arraylist 
+        	List<Boolean> list = new ArrayList<Boolean>();
+        	for (boolean b:this.geohashArray) {
+        		list.add(b);
+        	}		
+        	Iterator<Boolean> iterator = list.iterator();
+        	return iterator;
         }
 
         @Override
-        public boolean equals(Object o) {
-            // @ToDo, fill this in
-            // Always override equals and hashcode together
-            // Your IDE can probably do this part for you
-            return false;
-        }
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			GeoHashImpl other = (GeoHashImpl) obj;
+			if (bitsOfPrecision != other.bitsOfPrecision)
+				return false;
+			if (!Arrays.equals(geohashArray, other.geohashArray))
+				return false;
+			if (geohashString == null) {
+				if (other.geohashString != null)
+					return false;
+			} else if (!geohashString.equals(other.geohashString))
+				return false;
+			return true;
+		}
 
         @Override
-        public int hashCode() {
-            // @ToDo, fill this in
-            // Always override equals and hashcode together
-            // Your IDE can probably do this part for you
-            return 0;
-        }
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + bitsOfPrecision;
+			result = prime * result + Arrays.hashCode(geohashArray);
+			result = prime * result + ((geohashString == null) ? 0 : geohashString.hashCode());
+			return result;
+		}
 
-        public String toString() {
-            // @ToDo, fill this in
-
-            return null;
-        }
+        @Override
+		public String toString() {
+			return "GeoHashImpl [geohashString=" + geohashString + ", geohashArray=" + Arrays.toString(geohashArray)
+					+ ", bitsOfPrecision=" + bitsOfPrecision + "]";
+		}
 
 
 

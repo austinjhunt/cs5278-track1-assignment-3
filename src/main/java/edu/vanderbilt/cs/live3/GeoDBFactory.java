@@ -13,7 +13,8 @@ public class GeoDBFactory {
          * in the GeoHash interface.
          *
          */
-        return null;
+    	
+    	return new GeoDBImpl(factory, bitsOfPrecision);
     }
 
 }
